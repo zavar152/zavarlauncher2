@@ -1,13 +1,13 @@
-package zavar.application;
+package application;
 
 import java.io.IOException;
 
+import download.DownloadZIP;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import zavar.download.DownloadZIP;
 
 public class App 
 {
@@ -40,7 +40,7 @@ public class App
 			{
 				info.textProperty().unbind();
 				bar.progressProperty().unbind();
-				down = new DownloadZIP("http://85.15.70.65/MinecraftFont.zip", "G:\\JavaDownload\\MinecraftFont.zip");
+				down = new DownloadZIP("http://109.167.166.234/MinecraftFont.zip", "G:\\JavaDownload\\MinecraftFont.zip");
 				
 				Task task = new Task<Void>() {
 				    @Override public Void call() {

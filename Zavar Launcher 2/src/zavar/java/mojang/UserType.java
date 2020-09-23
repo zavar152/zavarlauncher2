@@ -4,7 +4,7 @@
  * Please see LICENSE.txt for license information.
  */
 
-package zavar.mojang;
+package mojang;
 
 /**
  * Represents the type of user for the account.

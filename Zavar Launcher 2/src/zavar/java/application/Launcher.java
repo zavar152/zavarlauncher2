@@ -1,15 +1,13 @@
-package zavar.application;
+package application;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import zavar.download.DownloadZIP;
-import zavar.mojang.AuthenticationException;
+import mojang.AuthenticationException;
 
 public class Launcher extends Application 
 {

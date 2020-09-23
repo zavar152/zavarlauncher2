@@ -1,14 +1,14 @@
-package zavar.application;
+package application;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import zavar.mojang.AuthenticationException;
-import zavar.mojang.LoginService;
-import zavar.mojang.Session;
-import zavar.mojang.YggdrasilLoginService;
+import mojang.AuthenticationException;
+import mojang.LoginService;
+import mojang.Session;
+import mojang.YggdrasilLoginService;
 
 public class Authentication 
 {

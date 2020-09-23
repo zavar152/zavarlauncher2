@@ -4,7 +4,7 @@
  * Please see LICENSE.txt for license information.
  */
 
-package zavar.mojang;
+package mojang;
 
 import java.util.Map;
 
