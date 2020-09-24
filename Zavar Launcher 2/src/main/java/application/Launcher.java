@@ -30,7 +30,7 @@ public class Launcher extends Application
 			} 
 			catch(Exception e)
 			{
-				e.printStackTrace();
+				e.printStackTrace(); 
 			}
 		}
 	public static void main(String[] args) throws AuthenticationException, IOException, InterruptedException
