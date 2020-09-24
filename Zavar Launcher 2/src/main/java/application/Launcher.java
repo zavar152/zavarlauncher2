@@ -20,7 +20,7 @@ public class Launcher extends Application
 	@Override
 	public void start(Stage primaryStage) throws Exception 
 	{
-		Parent main_fxml = FXMLLoader.load(getClass().getResource("/zavar/fxml/main.fxml"));
+		Parent main_fxml = FXMLLoader.load(getClass().getResource("/fxml/main.fxml"));
 			try 
 			{
 				Scene scene = new Scene(main_fxml, width, height);
