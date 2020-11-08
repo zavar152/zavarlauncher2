@@ -1,24 +1,25 @@
 package application;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import download.DownloadZIP;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import util.LanguageManager;
 
-public class App 
+public class MainScreen 
 {
 	@FXML
 	private ProgressBar bar;
 	
 	@FXML
-	private Button begin;
-	
-	@FXML
-	private Button options_button;
+	private Button launch_button, account_button, options_button;
 	
 	@FXML
 	private Label info;
@@ -29,20 +30,29 @@ public class App
 	@FXML
     void initialize() throws IOException 
     {
+		setupLanguage();
 		bar.setStyle("-fx-accent: green");
 		
 		options_button.setOnAction(event -> {
-			
+			try 
+			{
+				Scene scene = new Scene(FXMLLoader.load(ResourcesManager.getManager().getFXML(1)), Launcher.width, Launcher.height);
+				Launcher.setScene(scene);
+			} 
+			catch (IOException e) 
+			{ 
+				e.printStackTrace();
+			}
 		});
 		
-		begin.setOnAction(event -> {
+		launch_button.setOnAction(event -> {
 			try 
 			{
 				info.textProperty().unbind();
 				bar.progressProperty().unbind();
 				down = new DownloadZIP("http://109.167.166.234/MinecraftFont.zip", "G:\\JavaDownload\\MinecraftFont.zip");
-				
-				Task task = new Task<Void>() {
+				 
+				Task<Void> task = new Task<Void>() {
 				    @Override public Void call() {
 				        final int max = 244816588;
 				        while(!down.isDownloaded())
@@ -87,4 +97,11 @@ public class App
 			
 		});
     }
+	
+	private void setupLanguage() throws UnsupportedEncodingException, IOException
+	{
+		launch_button.setText(LanguageManager.getLang().get("launcher.button.launch").toString());
+		options_button.setText(LanguageManager.getLang().get("launcher.button.options").toString());
+		account_button.setText(LanguageManager.getLang().get("launcher.button.account").toString());
+	}
 }
