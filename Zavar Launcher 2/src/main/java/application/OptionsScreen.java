@@ -10,8 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import util.LanguageManager;
-import util.PropertiesManager;
+import util.ResourcesManager;
 
 public class OptionsScreen 
 {
@@ -29,52 +28,24 @@ public class OptionsScreen
     {
 		setupLanguage();
 		lang_box.setItems(FXCollections.observableArrayList("English", "Русский"));
-		switch(PropertiesManager.getProperties().get("lang").toString()) 
-		{
-			case "ru": 
-			{
-				lang_box.setPromptText("Русский");
-				break;
-			}
-			case "en":
-			{
-				lang_box.setPromptText("English");
-				break;
-			}
-			default:
-			{
-				lang_box.setPromptText("English");
-				break;
-			}
-		}
 		
 		lang_box.setOnAction(event -> {
-			switch(lang_box.getValue())
-			{
-				case "English": 
+			try {
+				if(lang_box.getValue().equals("Русский"))
 				{
-					try 
-					{
-						//ResourcesManager.getManager().getProperties().setProperty("lang", "en");
-						setupLanguage();
-					} 
-					catch (IOException e) 
-					{
-						e.printStackTrace();
-					}
+					ResourcesManager.getManager().changeProperty("lang", "ru");
+					ResourcesManager.getManager().reloadLanguage();
+					setupLanguage();
 				}
-				case "Русский":
+				else if(lang_box.getValue().equals("English"))
 				{
-					try 
-					{
-						//ResourcesManager.getManager().getProperties().setProperty("lang", "ru");
-						setupLanguage();
-					} 
-					catch (IOException e) 
-					{
-						e.printStackTrace();
-					}
+					ResourcesManager.getManager().changeProperty("lang", "en");
+					ResourcesManager.getManager().reloadLanguage();
+					setupLanguage();
 				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		});
 		
@@ -93,7 +64,15 @@ public class OptionsScreen
 	
 	private void setupLanguage() throws UnsupportedEncodingException, IOException
 	{
-		back_button.setText(LanguageManager.getLang().get("launcher.button.back").toString());
-		lang_label.setText(LanguageManager.getLang().get("launcher.optins.lang").toString());
+		if(ResourcesManager.getManager().getLanguage().equals("ru"))
+		{
+			lang_box.setValue("Русский");
+		}
+		else if(ResourcesManager.getManager().getLanguage().equals("en"))
+		{
+			lang_box.setValue("English");
+		}
+		back_button.setText(ResourcesManager.getManager().getLangFile().getProperty("launcher.button.back"));
+		lang_label.setText(ResourcesManager.getManager().getLangFile().getProperty("launcher.optins.lang"));
 	}
 }

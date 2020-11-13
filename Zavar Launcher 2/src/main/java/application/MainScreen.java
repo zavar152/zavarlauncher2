@@ -11,7 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import util.LanguageManager;
+import util.ResourcesManager;
 
 public class MainScreen 
 {
@@ -100,8 +100,8 @@ public class MainScreen
 	
 	private void setupLanguage() throws UnsupportedEncodingException, IOException
 	{
-		launch_button.setText(LanguageManager.getLang().get("launcher.button.launch").toString());
-		options_button.setText(LanguageManager.getLang().get("launcher.button.options").toString());
-		account_button.setText(LanguageManager.getLang().get("launcher.button.account").toString());
+		launch_button.setText(ResourcesManager.getManager().getLangFile().getProperty("launcher.button.launch"));
+		account_button.setText(ResourcesManager.getManager().getLangFile().getProperty("launcher.button.account"));
+		options_button.setText(ResourcesManager.getManager().getLangFile().getProperty("launcher.button.options"));
 	}
 }
