@@ -32,7 +32,7 @@ public class MainScreen
     {
 		setupLanguage();
 		bar.setStyle("-fx-accent: green");
-		
+
 		options_button.setOnAction(event -> {
 			try 
 			{

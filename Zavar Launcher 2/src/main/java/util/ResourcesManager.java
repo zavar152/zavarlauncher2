@@ -16,7 +16,7 @@ public class ResourcesManager
 {
 	private ArrayList<URL> fxml;
 	private static ResourcesManager instance;
-	private static Properties lang, prop;
+	private Properties lang, prop;
 	
     private ResourcesManager() throws UnsupportedEncodingException, IOException
     {
@@ -24,11 +24,10 @@ public class ResourcesManager
     	prop.load(new FileInputStream(Launcher.getPropsPath()));
     	
 		lang = new Properties();
-		lang.load(new InputStreamReader(getClass().getResourceAsStream("/lang/"+ prop.getProperty("lang") +".properties"), "UTF-8"));
-    
+		reloadLanguage();
+		
 		fxml = new ArrayList<URL>();
-		fxml.add(getClass().getResource("/fxml/mainScreen.fxml"));
-		fxml.add(getClass().getResource("/fxml/optionsScreen.fxml"));
+		reloadFXML();
     }
     public static ResourcesManager getManager() throws UnsupportedEncodingException, IOException
     { 
@@ -53,6 +52,18 @@ public class ResourcesManager
 	public Properties getLangFile()
 	{
 		return lang;
+	}
+	
+	public String getTheme()
+	{
+		return prop.getProperty("theme");
+	}
+	
+	public void reloadFXML()
+	{
+		fxml.clear();
+		fxml.add(getClass().getResource("/fxml/mainScreen" + prop.getProperty("theme") + ".fxml"));
+		fxml.add(getClass().getResource("/fxml/optionsScreen" + prop.getProperty("theme") + ".fxml"));
 	}
 	
 	public String getLanguage()

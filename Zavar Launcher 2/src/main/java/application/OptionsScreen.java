@@ -18,16 +18,63 @@ public class OptionsScreen
 	private Button back_button;
 	
 	@FXML
-	private ComboBox<String> lang_box;
+	private ComboBox<String> lang_box, theme_box;
 	
 	@FXML
-	private Label lang_label;
+	private Label lang_label, theme_label;
 	
 	@FXML
     void initialize() throws IOException 
     {
 		setupLanguage();
 		lang_box.setItems(FXCollections.observableArrayList("English", "Русский"));
+		theme_box.setItems(FXCollections.observableArrayList("Default", "Dark"));
+		theme_box.setDisable(true);
+		
+		try 
+		{
+			if(ResourcesManager.getManager().getTheme().equals("0"))
+			{
+				theme_box.setValue("Default");
+			}
+			else if(ResourcesManager.getManager().getTheme().equals("1"))
+			{
+				theme_box.setValue("Dark");
+			}
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		
+		theme_box.setOnAction(event -> {
+			if(theme_box.getValue() == "Default")
+			{
+				try 
+				{
+					ResourcesManager.getManager().changeProperty("theme", "0");
+					ResourcesManager.getManager().reloadFXML();
+					Launcher.setScene(new Scene(FXMLLoader.load(ResourcesManager.getManager().getFXML(1)), Launcher.width, Launcher.height));
+				} 
+				catch (IOException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+			else if(theme_box.getValue() == "Dark")
+			{
+				try 
+				{
+					ResourcesManager.getManager().changeProperty("theme", "1");
+					ResourcesManager.getManager().reloadFXML();
+					Launcher.setScene(new Scene(FXMLLoader.load(ResourcesManager.getManager().getFXML(1)), Launcher.width, Launcher.height));
+				} 
+				catch (IOException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+		});
 		
 		lang_box.setOnAction(event -> {
 			try {

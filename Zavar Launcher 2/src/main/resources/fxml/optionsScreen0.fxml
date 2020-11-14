@@ -18,5 +18,11 @@
          </font>
       </Label>
       <ComboBox fx:id="lang_box" layoutX="104.0" layoutY="31.0" prefHeight="25.0" prefWidth="125.0" promptText="English" />
+      <Label fx:id="theme_label" layoutX="28.0" layoutY="71.0" prefHeight="20.0" prefWidth="76.0" text="Theme:">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="theme_box" layoutX="104.0" layoutY="69.0" prefHeight="25.0" prefWidth="125.0" promptText="Default" />
    </children>
 </AnchorPane>

@@ -61,7 +61,9 @@ public class HttpRequest implements Closeable {
     private HttpURLConnection conn;
     private InputStream inputStream;
     
+    @SuppressWarnings("unused")
     private long contentLength = -1;
+	@SuppressWarnings("unused")
 	private long readBytes = 0;
 
     /**
@@ -244,7 +246,8 @@ public class HttpRequest implements Closeable {
      * @throws java.io.IOException  on I/O error
      * @throws InterruptedException on interruption
      */
-    public HttpRequest saveContent(File file) throws IOException, InterruptedException {
+    @SuppressWarnings("deprecation")
+	public HttpRequest saveContent(File file) throws IOException, InterruptedException {
         FileOutputStream fos = null;
         BufferedOutputStream bos = null;
 
@@ -489,7 +492,8 @@ public class HttpRequest implements Closeable {
          * @return the object
          * @throws java.io.IOException on I/O error
          */
-        public <T> T asJson(TypeReference type) throws IOException {
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+		public <T> T asJson(TypeReference type) throws IOException {
             return (T) mapper.readValue(asString("UTF-8"), type);
         }
 
@@ -519,7 +523,8 @@ public class HttpRequest implements Closeable {
          * @throws java.io.IOException  on I/O error
          * @throws InterruptedException on interruption
          */
-        public BufferedResponse saveContent(File file) throws IOException, InterruptedException {
+        @SuppressWarnings("deprecation")
+		public BufferedResponse saveContent(File file) throws IOException, InterruptedException {
             FileOutputStream fos = null;
             BufferedOutputStream bos = null;
 

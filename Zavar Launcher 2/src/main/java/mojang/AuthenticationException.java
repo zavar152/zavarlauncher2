@@ -9,6 +9,7 @@ package mojang;
 /**
  * Thrown on authentication error.
  */
+@SuppressWarnings("serial")
 public class AuthenticationException extends LauncherException {
 
     public AuthenticationException(String message, String localizedMessage) {

@@ -9,6 +9,7 @@ package mojang;
 /**
  * A human-readable error wrapper.
  */
+@SuppressWarnings("serial")
 public class LauncherException extends Exception {
 
     private final String localizedMessage;
