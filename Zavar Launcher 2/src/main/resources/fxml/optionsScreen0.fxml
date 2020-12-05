@@ -1,28 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #B0C4DE;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.OptionsScreen">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #B0C4DE;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.OptionsScreen">
    <children>
       <AnchorPane layoutY="351.0" prefHeight="49.0" prefWidth="600.0" style="-fx-background-color: #87CEEB;">
          <children>
             <Button fx:id="back_button" layoutX="176.0" layoutY="9.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="31.0" prefWidth="76.0" text="Back" />
          </children></AnchorPane>
-      <Label fx:id="lang_label" layoutX="28.0" layoutY="33.0" prefHeight="20.0" prefWidth="76.0" text="Language:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font>
-      </Label>
-      <ComboBox fx:id="lang_box" layoutX="104.0" layoutY="31.0" prefHeight="25.0" prefWidth="125.0" promptText="English" />
-      <Label fx:id="theme_label" layoutX="28.0" layoutY="71.0" prefHeight="20.0" prefWidth="76.0" text="Theme:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font>
-      </Label>
-      <ComboBox fx:id="theme_box" layoutX="104.0" layoutY="69.0" prefHeight="25.0" prefWidth="125.0" promptText="Default" />
+      <TitledPane fx:id="launcher_settings_pane" animated="false" collapsible="false" layoutX="14.0" layoutY="14.0" prefHeight="175.0" prefWidth="232.0" text="Launcher settings">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="92.0" prefWidth="230.0" style="-fx-background-color: #48D1CC;">
+               <children>
+                  <Label fx:id="lang_label" layoutX="8.0" layoutY="14.0" prefHeight="20.0" prefWidth="76.0" text="Language:">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="lang_box" layoutX="84.0" layoutY="12.0" prefHeight="25.0" prefWidth="125.0" />
+                  <Label fx:id="theme_label" layoutX="8.0" layoutY="52.0" prefHeight="20.0" prefWidth="76.0" text="Theme:">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="theme_box" layoutX="84.0" layoutY="50.0" prefHeight="25.0" prefWidth="125.0" />
+                  <CheckBox fx:id="console_checkbox" layoutX="8.0" layoutY="83.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="197.0" text="Enable console">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="hide_checkbox" layoutX="8.0" layoutY="116.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="197.0" text="Hide launcher">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </CheckBox>
+               </children>
+            </AnchorPane>
+        </content>
+      </TitledPane>
+      <TitledPane fx:id="java_settings_pane" animated="false" collapsible="false" layoutX="256.0" layoutY="14.0" prefHeight="175.0" prefWidth="332.0" text="Java settings">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #48D1CC;">
+               <children>
+                  <Label fx:id="jvm_path_label" layoutX="8.0" layoutY="15.0" prefHeight="20.0" prefWidth="76.0" text="JVM path:">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="jvm_path_field" layoutX="77.0" layoutY="13.0" prefHeight="25.0" prefWidth="247.0" />
+                  <Spinner layoutX="77.0" layoutY="50.0" prefHeight="25.0" prefWidth="110.0" fx:id="xmx_spinner" />
+                  <Spinner layoutX="77.0" layoutY="82.0" prefHeight="25.0" prefWidth="110.0" fx:id="xms_spinner" />
+                  <Spinner fx:id="permgen_spinner" layoutX="77.0" layoutY="116.0" prefHeight="25.0" prefWidth="110.0" />
+                  <Label layoutX="8.0" layoutY="53.0" prefHeight="20.0" prefWidth="76.0" text="Xmx:" fx:id="xmx_label">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="8.0" layoutY="85.0" prefHeight="20.0" prefWidth="76.0" text="Xms:" fx:id="xms_label">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="permgen_label" layoutX="8.0" layoutY="118.0" prefHeight="20.0" prefWidth="76.0" text="PermGen:">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+               </children></AnchorPane>
+        </content>
+      </TitledPane>
    </children>
 </AnchorPane>

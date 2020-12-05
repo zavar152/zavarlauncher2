@@ -2,14 +2,19 @@ package application;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Properties;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import util.ResourcesManager;
 
 public class OptionsScreen 
@@ -24,6 +29,20 @@ public class OptionsScreen
 	private Label lang_label, theme_label;
 	
 	@FXML
+	private TitledPane launcher_settings_pane, java_settings_pane;
+	
+	@FXML
+	private TextField jvm_path_field;
+	
+	@FXML
+	private Spinner<Integer> xmx_spinner, xms_spinner, permgen_spinner;
+	
+	@FXML
+	private CheckBox hide_checkbox, console_checkbox;
+	
+	private ResourcesManager resources = ResourcesManager.getManager();
+	
+	@FXML
     void initialize() throws IOException 
     {
 		setupLanguage();
@@ -31,30 +50,47 @@ public class OptionsScreen
 		theme_box.setItems(FXCollections.observableArrayList("Default", "Dark"));
 		theme_box.setDisable(true);
 		
-		try 
+		if(resources.getProperty("theme").equals("0"))
 		{
-			if(ResourcesManager.getManager().getTheme().equals("0"))
-			{
-				theme_box.setValue("Default");
-			}
-			else if(ResourcesManager.getManager().getTheme().equals("1"))
-			{
-				theme_box.setValue("Dark");
-			}
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
+			theme_box.setValue("Default");
 		}
+		else if(resources.getProperty("theme").equals("1"))
+		{
+			theme_box.setValue("Dark");
+		}
+		console_checkbox.setSelected(Boolean.parseBoolean(resources.getProperty("console")));
+		hide_checkbox.setSelected(Boolean.parseBoolean(resources.getProperty("hide")));
+		
+		console_checkbox.setOnMouseClicked(event -> {
+			try 
+			{
+				resources.changeProperty("console", Boolean.toString(console_checkbox.isSelected()));
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
+		});
+		
+		hide_checkbox.setOnMouseClicked(event -> {
+			try 
+			{
+				resources.changeProperty("hide", Boolean.toString(hide_checkbox.isSelected()));
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
+		});
 		
 		theme_box.setOnAction(event -> {
 			if(theme_box.getValue() == "Default")
 			{
 				try 
 				{
-					ResourcesManager.getManager().changeProperty("theme", "0");
-					ResourcesManager.getManager().reloadFXML();
-					Launcher.setScene(new Scene(FXMLLoader.load(ResourcesManager.getManager().getFXML(1)), Launcher.width, Launcher.height));
+					resources.changeProperty("theme", "0");
+					resources.reloadFXML();
+					Launcher.setScene(new Scene(FXMLLoader.load(resources.getFXML(1)), Launcher.width, Launcher.height));
 				} 
 				catch (IOException e) 
 				{
@@ -65,9 +101,9 @@ public class OptionsScreen
 			{
 				try 
 				{
-					ResourcesManager.getManager().changeProperty("theme", "1");
-					ResourcesManager.getManager().reloadFXML();
-					Launcher.setScene(new Scene(FXMLLoader.load(ResourcesManager.getManager().getFXML(1)), Launcher.width, Launcher.height));
+					resources.changeProperty("theme", "1");
+					resources.reloadFXML();
+					Launcher.setScene(new Scene(FXMLLoader.load(resources.getFXML(1)), Launcher.width, Launcher.height));
 				} 
 				catch (IOException e) 
 				{
@@ -80,18 +116,19 @@ public class OptionsScreen
 			try {
 				if(lang_box.getValue().equals("Русский"))
 				{
-					ResourcesManager.getManager().changeProperty("lang", "ru");
-					ResourcesManager.getManager().reloadLanguage();
+					resources.changeProperty("lang", "ru");
+					resources.reloadLanguage();
 					setupLanguage();
 				}
 				else if(lang_box.getValue().equals("English"))
 				{
-					ResourcesManager.getManager().changeProperty("lang", "en");
-					ResourcesManager.getManager().reloadLanguage();
+					resources.changeProperty("lang", "en");
+					resources.reloadLanguage();
 					setupLanguage();
 				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+			} 
+			catch (IOException e) 
+			{
 				e.printStackTrace();
 			}
 		});
@@ -99,7 +136,7 @@ public class OptionsScreen
 		back_button.setOnAction(event -> {
 			try 
 			{
-				Scene scene = new Scene(FXMLLoader.load(ResourcesManager.getManager().getFXML(0)), Launcher.width, Launcher.height);
+				Scene scene = new Scene(FXMLLoader.load(resources.getFXML(0)), Launcher.width, Launcher.height);
 				Launcher.setScene(scene);
 			} 
 			catch (IOException e) 
@@ -111,15 +148,21 @@ public class OptionsScreen
 	
 	private void setupLanguage() throws UnsupportedEncodingException, IOException
 	{
-		if(ResourcesManager.getManager().getLanguage().equals("ru"))
+		Properties lang = resources.getLangFile();
+		if(resources.getProperty("lang").equals("ru"))
 		{
 			lang_box.setValue("Русский");
 		}
-		else if(ResourcesManager.getManager().getLanguage().equals("en"))
+		else if(resources.getProperty("lang").equals("en"))
 		{
 			lang_box.setValue("English");
 		}
-		back_button.setText(ResourcesManager.getManager().getLangFile().getProperty("launcher.button.back"));
-		lang_label.setText(ResourcesManager.getManager().getLangFile().getProperty("launcher.optins.lang"));
+		back_button.setText(lang.getProperty("launcher.button.back"));
+		lang_label.setText(lang.getProperty("launcher.options.lang"));
+		theme_label.setText(lang.getProperty("launcher.options.theme"));
+		java_settings_pane.setText(lang.getProperty("launcher.options.java"));
+		launcher_settings_pane.setText(lang.getProperty("launcher.options.launcher"));
+		console_checkbox.setText(lang.getProperty("launcher.options.console"));
+		hide_checkbox.setText(lang.getProperty("launcher.options.hide"));
 	}
 }
