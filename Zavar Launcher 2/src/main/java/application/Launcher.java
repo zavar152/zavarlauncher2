@@ -4,14 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.Optional;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import mojang.AuthenticationException;
@@ -127,23 +123,5 @@ public class Launcher extends Application
 	public static Stage getStage()
 	{
 		return mainStage;
-	}
-	
-	public static boolean showScreen(String title, String text, AlertType type)
-	{
-		Alert alert = new Alert(type);
-		alert.setTitle(title);
-		alert.setHeaderText(text);
-		alert.initOwner(Launcher.mainStage);
-  		Optional<ButtonType> result = alert.showAndWait();
-  		if(result.get() == ButtonType.OK)
-		{
-			return true;
-		}
-		else if(result.get() == ButtonType.CANCEL)
-		{
-			return false;
-		}
-		return false;
 	}
 } 

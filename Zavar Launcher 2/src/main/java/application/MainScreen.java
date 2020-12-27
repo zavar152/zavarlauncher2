@@ -78,6 +78,18 @@ public class MainScreen
 			String name = InstanceManager.getManager().getInstances()[i];
 			Label text = new Label(name);
 			instances[i].setOnMouseClicked(event -> {
+				if(event.getButton().equals(MouseButton.PRIMARY))
+				{
+					selected_instance = text.getText();
+					if(InstanceManager.getManager().isInstalled(name))
+					{
+						launch_button.setText(resources.getLangFile().getProperty("launcher.button.launch"));
+					}
+					else
+					{
+						launch_button.setText(resources.getLangFile().getProperty("launcher.button.download"));
+					}
+				}
 				if(event.getButton().equals(MouseButton.SECONDARY))
 				{
 					if(InstanceManager.getManager().isInstalled(name))
@@ -171,16 +183,6 @@ public class MainScreen
 		}*/
 		
 
-        
-		/*instances_listview.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Label>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Label> observable, Label oldValue, Label newValue) 
-			{
-				selected_instance = newValue.getText();
-			}
-			
-		}); */
 		buildList();
 		
 		setupLanguage();
@@ -200,66 +202,85 @@ public class MainScreen
 			}
 		});
 		
-		launch_button.setOnMouseClicked(event -> {
-			if(!launching)
+		account_button.setOnAction(event -> {
+			try 
 			{
-				launching = true;
-				options_button.setDisable(true);
-				account_button.setDisable(true);
-				try 
+				Scene scene = new Scene(FXMLLoader.load(resources.getFXML(2)), Launcher.width, Launcher.height);
+				Launcher.setScene(scene);
+			} 
+			catch (IOException e) 
+			{ 
+				ErrorWindow.show(e.getMessage());
+			}
+		});
+		
+		launch_button.setOnMouseClicked(event -> {
+			if(!InstanceManager.getManager().isInstalled(selected_instance))
+			{
+				if(!launching)
 				{
-					info.textProperty().unbind();
-					bar.progressProperty().unbind();
-					down = new Downloader(resources.getProperty("server") + "/MinecraftFont.zip", "MinecraftFont.zip", Launcher.getGamePath() + "/MinecraftFont");
-					 
-					task = new Task<Void>() 
+					launching = true;
+					options_button.setDisable(true);
+					account_button.setDisable(true);
+					try 
 					{
-					    @Override 
-					    public Void call() 
-					    {
-						        final int max = 244816588;
-						        while(!down.isDownloaded() && !this.isCancelled())
-						        {
-						            updateProgress(down.getFileSize(), max);
-						            updateMessage(down.getState() + " " + down.getFileSize());
-						        }
-						        launch_button.setDisable(true);
-						        while(!down.isUnzipped() && !this.isCancelled())
-						        {
-						        	updateMessage(down.getState());
-						        	if(down.getState().equals("ZipException"))
-						        	{
-						        		bar.setStyle("-fx-accent: red");
-						        	}
-						        	else if(down.getState().equals("IOException"))
-						        	{
-						        		bar.setStyle("-fx-accent: red");
-						        	}
-						        }
-						        updateMessage(down.getState());
-						        updateProgress(0, 0);
-						        launch_button.setDisable(false);
-						        return null;
-					    }
-					};
-					
-					info.textProperty().bind(task.messageProperty());
-					bar.progressProperty().bind(task.progressProperty());
-					
-					new Thread(task).start();
-					down.downloadMinecraft();
-				} 
-				catch (Exception e) 
+						info.textProperty().unbind();
+						bar.progressProperty().unbind();
+						down = new Downloader(resources.getProperty("server") + "/" + selected_instance + ".zip", selected_instance + ".zip", Launcher.getGamePath() + "/" + selected_instance);
+						 
+						task = new Task<Void>() 
+						{
+						    @Override 
+						    public Void call() 
+						    {
+							        final int max = 244816588;
+							        while(!down.isDownloaded() && !this.isCancelled())
+							        {
+							            updateProgress(down.getFileSize(), max);
+							            updateMessage(down.getState() + " " + down.getFileSize());
+							        }
+							        launch_button.setDisable(true);
+							        while(!down.isUnzipped() && !this.isCancelled())
+							        {
+							        	updateMessage(down.getState());
+							        	if(down.getState().equals("ZipException"))
+							        	{
+							        		bar.setStyle("-fx-accent: red");
+							        	}
+							        	else if(down.getState().equals("IOException"))
+							        	{
+							        		bar.setStyle("-fx-accent: red");
+							        	}
+							        }
+							        updateMessage(down.getState());
+							        updateProgress(0, 0);
+							        launch_button.setDisable(false);
+							        return null;
+						    }
+						};
+						
+						info.textProperty().bind(task.messageProperty());
+						bar.progressProperty().bind(task.progressProperty());
+						
+						new Thread(task).start();
+						down.downloadMinecraft();
+					} 
+					catch (Exception e) 
+					{
+						bar.setStyle("-fx-accent: red");
+						ErrorWindow.show(e.getMessage());
+					}
+				}
+				else
 				{
-					bar.setStyle("-fx-accent: red");
-					e.printStackTrace();
+					down.cancel();
+					task.cancel();
+					launching = false;
 				}
 			}
 			else
 			{
-				down.cancel();
-				task.cancel();
-				launching = false;
+				System.out.println("Launching");
 			}
 		});
     }

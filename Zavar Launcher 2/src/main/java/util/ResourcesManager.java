@@ -69,6 +69,7 @@ public class ResourcesManager
 		fxml.clear();
 		fxml.add(getClass().getResource("/fxml/mainScreen" + prop.getProperty("theme") + ".fxml"));
 		fxml.add(getClass().getResource("/fxml/optionsScreen" + prop.getProperty("theme") + ".fxml"));
+		fxml.add(getClass().getResource("/fxml/accountScreen" + prop.getProperty("theme") + ".fxml"));
 	}
 	
 	public URL getFXML(int index)

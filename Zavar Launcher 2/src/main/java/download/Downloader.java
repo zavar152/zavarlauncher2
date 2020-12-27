@@ -140,8 +140,6 @@ public class Downloader implements Runnable
 		catch (IOException e) 
 		{
 			state = "IOException";
-			Alert alert = new Alert(AlertType.WARNING, e.getMessage());
-	        alert.showAndWait();
 		}
 	}
 }
