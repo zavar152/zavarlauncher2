@@ -27,7 +27,7 @@ public class Launcher extends Application
 	private static String temp_path = home + "/zavarlauncher/temp";
 	private static String game_path = home + "/zavarlauncher/game";
 	
-	public static boolean online = false;
+	//public static boolean online = false;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception
@@ -43,12 +43,14 @@ public class Launcher extends Application
 				mainStage.setTitle("Zavar Launcher");
 				mainStage.setOnCloseRequest(event -> {
 					MainScreen.stopDownload();
+					System.exit(0);
 				});
 				mainStage.show();
 			} 
 			catch(Exception e)
 			{
-				ErrorWindow.show(e.getMessage()); 
+				e.printStackTrace();
+				ErrorWindow.show(e); 
 			} 
 	}
 	

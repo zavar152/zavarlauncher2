@@ -27,7 +27,7 @@ public class Downloader implements Runnable
 	private String state, extract, name;
 	
 	
-	public void downloadMinecraft()
+	public void downloadInstance()
 	{
 		thr.start();
 	}

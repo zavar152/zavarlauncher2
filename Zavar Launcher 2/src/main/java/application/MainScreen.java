@@ -9,6 +9,7 @@ import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 
 import download.Downloader;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -50,49 +51,53 @@ public class MainScreen
 	private ListView<Pane> instances_listview;
 	
 	@FXML
-	private MenuItem open;
+	private MenuItem open = new MenuItem();
 	
 	@FXML
-	private MenuItem delete;
+	private MenuItem delete = new MenuItem();
 	
 	private static Downloader down;
 	
 	private static Task<Void> task;
 	
 	private ResourcesManager resources = ResourcesManager.getManager();
+	private InstanceManager instManager = InstanceManager.getManager();
 	
 	private static boolean launching = false;
 	
 	private String selected_instance;
 	
-	private ContextMenu contextMenu;
+	private ContextMenu contextMenu = new ContextMenu();
 	
 	private void buildList()
 	{
 		instances_listview.getItems().clear();
-		Pane[] instances = new Pane[InstanceManager.getManager().getInstances().length];
+		contextMenu.getItems().clear();
+		Pane[] instances = new Pane[instManager.getInstances().size()];
 		
 		for(int i = 0; i < instances.length; i++)
 		{
 			instances[i] = new Pane();
-			String name = InstanceManager.getManager().getInstances()[i];
+			InstanceManager.Instance inst = instManager.getInstances().get(i);
+			String name = inst.getName();
 			Label text = new Label(name);
-			instances[i].setOnMouseClicked(event -> {
-				if(event.getButton().equals(MouseButton.PRIMARY))
+			instances[i].setOnMousePressed(event -> {
+				selected_instance = text.getText();
+				if(inst.isInstalled() & inst.isUpdated())
 				{
-					selected_instance = text.getText();
-					if(InstanceManager.getManager().isInstalled(name))
-					{
-						launch_button.setText(resources.getLangFile().getProperty("launcher.button.launch"));
-					}
-					else
-					{
-						launch_button.setText(resources.getLangFile().getProperty("launcher.button.download"));
-					}
+					launch_button.setText(resources.getLangFile().getProperty("launcher.button.launch"));
+				}
+				else if(inst.isInstalled() & !inst.isUpdated())
+				{
+					launch_button.setText(resources.getLangFile().getProperty("launcher.button.update"));
+				}
+				else if(!inst.isInstalled())
+				{
+					launch_button.setText(resources.getLangFile().getProperty("launcher.button.download"));
 				}
 				if(event.getButton().equals(MouseButton.SECONDARY))
 				{
-					if(InstanceManager.getManager().isInstalled(name))
+					if(inst.isInstalled())
 					{
 						selected_instance = text.getText();
 						contextMenu.show(instances_listview, event.getScreenX(), event.getScreenY());
@@ -103,23 +108,21 @@ public class MainScreen
 					}
 				}
 			});
-			if(InstanceManager.getManager().isInstalled(name))
+			if(inst.isInstalled() & inst.isUpdated())
 			{
 				text.setTextFill(Color.GREEN);
 			}
-			else
+			else if(inst.isInstalled() & !inst.isUpdated())
+			{
+				text.setTextFill(Color.BLUEVIOLET);
+			}
+			else if(!inst.isInstalled())
 			{
 				text.setTextFill(Color.RED);
 			}
 			text.setFont(Font.font("System", FontWeight.BOLD, 14));
 			instances[i].getChildren().add(text); 
 		}
-		
-		
-		
-		contextMenu = new ContextMenu();
-		open = new MenuItem();
-		delete = new MenuItem();
 		
 		open.setOnAction(event -> {
 			try 
@@ -128,9 +131,11 @@ public class MainScreen
 			}
 			catch (IOException e) 
 			{
-				ErrorWindow.show(e.getMessage());
+				ErrorWindow.show(e);
 			}
 		});
+		
+		delete.setStyle("-fx-text-fill: red");
 		
 		delete.setOnAction(event -> {
 			Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure?");
@@ -141,18 +146,19 @@ public class MainScreen
 				try 
 				{
 					FileUtils.deleteDirectory(new File(Launcher.getGamePath() + "/" + selected_instance));
-					InstanceManager.getManager().removeLocalInstance(selected_instance);
+					instManager.deleteInstance(selected_instance);
 				} 
 				catch (IOException e) 
 				{
-					ErrorWindow.show(e.getMessage());
+					ErrorWindow.show(e);
 				}
+				launch_button.setText(resources.getLangFile().getProperty("launcher.button.download"));
 				buildList();
 			}
 		});
         
         contextMenu.getItems().addAll(open, delete);
-		
+        
         instances_listview.getItems().addAll(instances);
 		
         instances_listview.setOnMouseClicked(event -> {
@@ -166,23 +172,6 @@ public class MainScreen
 	@FXML
     void initialize() throws IOException 
     {
-		//String[] instances = (String[]) InstanceManager.getManager().getInstances();
-		//instances_listview.setItems(FXCollections.observableArrayList(instances));
-		/*Label[] instances = new Label[InstanceManager.getManager().getInstances().length];
-		
-		for(int i = 0; i < instances.length; i++)
-		{
-			instances[i] = new Label();
-			instances[i].setOnMouseClicked(event -> {
-				if(event.getButton().equals(MouseButton.SECONDARY))
-				{
-					contextMenu.show(instances_listview, event.getScreenX(), event.getScreenY());
-				}
-			});
-			instances[i].setText(InstanceManager.getManager().getInstances()[i]);
-		}*/
-		
-
 		buildList();
 		
 		setupLanguage();
@@ -198,7 +187,7 @@ public class MainScreen
 			} 
 			catch (IOException e) 
 			{ 
-				ErrorWindow.show(e.getMessage());
+				ErrorWindow.show(e);
 			}
 		});
 		
@@ -210,12 +199,14 @@ public class MainScreen
 			} 
 			catch (IOException e) 
 			{ 
-				ErrorWindow.show(e.getMessage());
+				ErrorWindow.show(e);
 			}
 		});
 		
 		launch_button.setOnMouseClicked(event -> {
-			if(!InstanceManager.getManager().isInstalled(selected_instance))
+			final InstanceManager.Instance inst = instManager.getInstanceByName(selected_instance);
+			
+			if(!inst.isInstalled() && !inst.isUpdated())
 			{
 				if(!launching)
 				{
@@ -233,7 +224,7 @@ public class MainScreen
 						    @Override 
 						    public Void call() 
 						    {
-							        final int max = 244816588;
+							        final int max = inst.getSize();
 							        while(!down.isDownloaded() && !this.isCancelled())
 							        {
 							            updateProgress(down.getFileSize(), max);
@@ -255,6 +246,16 @@ public class MainScreen
 							        updateMessage(down.getState());
 							        updateProgress(0, 0);
 							        launch_button.setDisable(false);
+									options_button.setDisable(false);
+									account_button.setDisable(false);
+							        if(!this.isCancelled())
+							        {
+								        instManager.installInstance(selected_instance);
+								        Platform.runLater(() -> {
+											buildList();
+								        });
+							        }
+							        launching = false;
 							        return null;
 						    }
 						};
@@ -263,12 +264,12 @@ public class MainScreen
 						bar.progressProperty().bind(task.progressProperty());
 						
 						new Thread(task).start();
-						down.downloadMinecraft();
+						down.downloadInstance();
 					} 
 					catch (Exception e) 
 					{
 						bar.setStyle("-fx-accent: red");
-						ErrorWindow.show(e.getMessage());
+						ErrorWindow.show(e);
 					}
 				}
 				else
@@ -278,7 +279,11 @@ public class MainScreen
 					launching = false;
 				}
 			}
-			else
+			else if(inst.isInstalled() && !inst.isUpdated())
+			{
+				System.out.println("Updating");
+			}
+			else if(inst.isInstalled() && inst.isUpdated())
 			{
 				System.out.println("Launching");
 			}

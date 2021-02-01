@@ -29,7 +29,7 @@ public class AccountScreen
 			} 
 			catch (IOException e) 
 			{
-				ErrorWindow.show(e.getMessage());
+				ErrorWindow.show(e);
 			}
 		});
     }
