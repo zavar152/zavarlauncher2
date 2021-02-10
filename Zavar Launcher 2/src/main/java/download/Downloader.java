@@ -10,10 +10,9 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
 import application.Launcher;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.progress.ProgressMonitor.Result;
+import util.ErrorWindow;
 
 public class Downloader implements Runnable
 {
@@ -39,11 +38,10 @@ public class Downloader implements Runnable
 		try 
 		{
 			website = new URL(url);
-		} 
+		}  
 		catch (MalformedURLException e)
 		{
-			Alert alert = new Alert(AlertType.WARNING, e.getMessage());
-	        alert.showAndWait();
+			ErrorWindow.show(e);
 		}
 		
 		try 
@@ -52,8 +50,7 @@ public class Downloader implements Runnable
 		} 
 		catch (IOException e1) 
 		{
-			Alert alert = new Alert(AlertType.WARNING, e1.getMessage());
-	        alert.showAndWait();
+			ErrorWindow.show(e1);
 		}
 		
 		try 
@@ -62,8 +59,7 @@ public class Downloader implements Runnable
 		} 
 		catch (FileNotFoundException e) 
 		{
-			Alert alert = new Alert(AlertType.WARNING, e.getMessage());
-	        alert.showAndWait();
+			ErrorWindow.show(e);
 		}
 		zip = new File(Launcher.getTempPath() + "/" + name);
 		thr = new Thread(this);
@@ -104,10 +100,11 @@ public class Downloader implements Runnable
 			fos.close();
 			zip.delete();
 			state = "Canceled";
+			System.out.println("Canceled downloading " + name);
 		} 
 		catch (IOException e) 
 		{
-			e.printStackTrace();
+			ErrorWindow.show(e);
 		}
 	}
 	
@@ -117,17 +114,20 @@ public class Downloader implements Runnable
 		try 
 		{
 			state = "Downloading";
+			System.out.println("Downloading " + name);
 			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 			state = "Downloaded";
+			System.out.println("Downloaded " + name);
 			downloaded = true;
 			if(!canceled)
 			{
 				zipFile = new ZipFile(Launcher.getTempPath() + "/" + name);
 				state = "Unzipping";
+				System.out.println("Unzipping " + name);
 				zipFile.extractAll(extract);
 				state = "Unzipped";
 				unzipped = true;
-				System.out.println("unzip");
+				System.out.println("Unzipped " + name);
 				rbc.close();
 				fos.close();
 				zip.delete();
@@ -140,6 +140,7 @@ public class Downloader implements Runnable
 		catch (IOException e) 
 		{
 			state = "IOException";
+			ErrorWindow.show(e);
 		}
 	}
 }

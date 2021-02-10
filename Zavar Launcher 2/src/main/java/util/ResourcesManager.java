@@ -1,11 +1,9 @@
 package util;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -43,10 +41,17 @@ public class ResourcesManager
     	return instance;		
     }
 	
-    public void changeProperty(String key, String value) throws FileNotFoundException, IOException
+    public void changeProperty(String key, String value)
     {
     	prop.setProperty(key, value);
-    	prop.store(new FileOutputStream(Launcher.getPropsPath()), null);
+    	try 
+    	{
+			prop.store(new FileOutputStream(Launcher.getPropsPath()), null);
+		} 
+    	catch (IOException e) 
+    	{
+			ErrorWindow.show(e);
+		}
     }
     
     public String getProperty(String key)
@@ -54,9 +59,16 @@ public class ResourcesManager
     	return prop.getProperty(key);
     }
     
-    public void reloadLanguage() throws UnsupportedEncodingException, IOException
+    public void reloadLanguage()
     {
-    	lang.load(new InputStreamReader(getClass().getResourceAsStream("/lang/"+ prop.getProperty("lang") +".properties"), "UTF-8"));
+    	try 
+    	{
+			lang.load(new InputStreamReader(getClass().getResourceAsStream("/lang/"+ prop.getProperty("lang") +".properties"), "UTF-8"));
+		} 
+    	catch (IOException e) 
+    	{
+    		ErrorWindow.show(e);
+		}
     }
     
 	public Properties getLangFile()
@@ -74,7 +86,7 @@ public class ResourcesManager
 	
 	public URL getFXML(int index)
 	{
-		return fxml.get(index);
+		return fxml.get(index); 
 	}
 }
 

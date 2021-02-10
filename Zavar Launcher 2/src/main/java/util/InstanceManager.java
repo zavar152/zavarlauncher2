@@ -19,6 +19,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import application.Launcher;
+import javafx.application.Platform;
 
 public class InstanceManager 
 {
@@ -49,20 +50,23 @@ public class InstanceManager
 		catch (IOException e) 
 		{
 			ErrorWindow.show(e, "Server is unavailable!");
+			System.out.println("Server is unavailable!");
 			if(instancesFile.exists())
 			{
 				connected = false;
+				System.out.println("Loading local instances...");
 				loadLocalInstances();
 				if(instances.size() == 0)
 				{
+					System.out.println("There is no any instances");
 					ErrorWindow.show("You don't have any instances!");
-			        System.exit(1);
+					Platform.exit();
 				}
 			}
 			else
 			{
 				ErrorWindow.show("You don't have any instances!");
-		        System.exit(1);
+				Platform.exit();
 			}
 		}
 	}
@@ -124,7 +128,7 @@ public class InstanceManager
             		tempLocalObj.put("minecraft", tempRemoteObj.get("minecraft"));
             		instanceArrayLocal.add(tempLocalObj);
                     getInstanceByName(name).update(tempRemoteObj.get("minecraft").toString(), Integer.parseInt(tempRemoteObj.get("size").toString()), tempRemoteObj.get("version").toString(), true);
-            		break;
+            		break; 
             	}
 			}
 			
@@ -139,6 +143,8 @@ public class InstanceManager
             {
                 ErrorWindow.show(e);
             }
+            
+            System.out.println("Installed instance - " + name);
     	} 
     	catch (IOException | ParseException e) 
     	{
@@ -178,6 +184,8 @@ public class InstanceManager
             {
                 ErrorWindow.show(e);
             }
+            
+            System.out.println("Deleted instance - " + name);
     	} 
     	catch (IOException | ParseException e) 
     	{
@@ -208,17 +216,17 @@ public class InstanceManager
 			{
 				JSONObject tempLocalObj = (JSONObject) instanceArrayLocal.get(i);
             	Instance inst = new Instance(tempLocalObj.get("name").toString(), tempLocalObj.get("version").toString(), tempLocalObj.get("version").toString(), Integer.parseInt(tempLocalObj.get("size").toString()), tempLocalObj.get("minecraft").toString(), true);
-            	System.out.println(inst.getName());
+            	/*System.out.println(inst.getName());
             	System.out.println("Installed: " + inst.isInstalled());
             	System.out.println("Updated: " + inst.isUpdated());
             	System.out.println("Size: " + inst.getSize());
             	System.out.println("Check: " + inst.checkInstallation());
-            	System.out.println();
+            	System.out.println();*/
             	
             	instances.add(inst);
 			}
 			
-			System.out.println(instances.toString());
+			System.out.println("Local instances: " + instances.toString());
 			
     	} 
     	catch (IOException | ParseException e) 
@@ -256,17 +264,17 @@ public class InstanceManager
             	}
             	
             	Instance inst = new Instance(name, localVersion, tempRemoteObj.get("version").toString(), Integer.parseInt(tempRemoteObj.get("size").toString()), tempRemoteObj.get("minecraft").toString(), inLocal);
-            	System.out.println(inst.getName());
+            	/*System.out.println(inst.getName());
             	System.out.println("Installed: " + inst.isInstalled());
             	System.out.println("Updated: " + inst.isUpdated());
             	System.out.println("Size: " + inst.getSize());
             	System.out.println("Check: " + inst.checkInstallation());
-            	System.out.println();
+            	System.out.println();*/
             	
             	instances.add(inst);
 			}
 			
-			System.out.println(instances.toString());
+			System.out.println("Remote instances: " + instances.toString());
 			
     	} 
     	catch (IOException | ParseException e) 

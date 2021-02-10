@@ -21,7 +21,7 @@ public class ErrorWindow
 	}
 	
 	public static void show(Exception e, String ... text)
-	{
+	{ 
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Zavar Launcher");
 		alert.initOwner(Launcher.getStage());

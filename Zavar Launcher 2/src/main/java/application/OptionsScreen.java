@@ -1,7 +1,6 @@
 package application;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 import javafx.collections.FXCollections;
@@ -13,8 +12,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import util.ErrorWindow;
 import util.ResourcesManager;
 
 public class OptionsScreen 
@@ -35,7 +36,7 @@ public class OptionsScreen
 	private TextField jvm_path_field;
 	
 	@FXML
-	private Spinner<Integer> xmx_spinner, xms_spinner, permgen_spinner;
+	private Spinner<Integer> xmx_spinner, xms_spinner, permgen_spinner = new Spinner<Integer>();
 	
 	@FXML
 	private CheckBox hide_checkbox, console_checkbox;
@@ -45,12 +46,22 @@ public class OptionsScreen
 	@FXML
     void initialize() throws IOException 
     {
+		Launcher.consoleStage.setOnCloseRequest(event -> {
+				resources.changeProperty("console", Boolean.toString(false));
+				console_checkbox.setSelected(false);
+		});
+		
 		setupLanguage();
 		lang_box.setItems(FXCollections.observableArrayList("English", "Русский"));
 		theme_box.setItems(FXCollections.observableArrayList("Default", "Dark"));
 		theme_box.setDisable(true);
 		
-		if(resources.getProperty("theme").equals("0"))
+		jvm_path_field.setText(resources.getProperty("path"));
+		xmx_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, Integer.parseInt(resources.getProperty("xmx"))));
+		xms_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, Integer.parseInt(resources.getProperty("xms"))));
+		permgen_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, Integer.parseInt(resources.getProperty("permgen"))));
+		
+		if(resources.getProperty("theme").equals("0")) 
 		{
 			theme_box.setValue("Default");
 		}
@@ -62,25 +73,19 @@ public class OptionsScreen
 		hide_checkbox.setSelected(Boolean.parseBoolean(resources.getProperty("hide")));
 		
 		console_checkbox.setOnMouseClicked(event -> {
-			try 
-			{
 				resources.changeProperty("console", Boolean.toString(console_checkbox.isSelected()));
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
+				if(console_checkbox.isSelected())
+				{
+					Launcher.consoleStage.show();
+				}
+				else
+				{
+					Launcher.consoleStage.hide();
+				}
 		});
 		
 		hide_checkbox.setOnMouseClicked(event -> {
-			try 
-			{
-				resources.changeProperty("hide", Boolean.toString(hide_checkbox.isSelected()));
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
+			resources.changeProperty("hide", Boolean.toString(hide_checkbox.isSelected()));
 		});
 		
 		theme_box.setOnAction(event -> {
@@ -94,7 +99,7 @@ public class OptionsScreen
 				} 
 				catch (IOException e) 
 				{
-					e.printStackTrace();
+					ErrorWindow.show(e);
 				}
 			}
 			else if(theme_box.getValue() == "Dark")
@@ -107,13 +112,12 @@ public class OptionsScreen
 				} 
 				catch (IOException e) 
 				{
-					e.printStackTrace();
+					ErrorWindow.show(e);
 				}
 			}
 		});
 		
 		lang_box.setOnAction(event -> {
-			try {
 				if(lang_box.getValue().equals("Русский"))
 				{
 					resources.changeProperty("lang", "ru");
@@ -126,14 +130,14 @@ public class OptionsScreen
 					resources.reloadLanguage();
 					setupLanguage();
 				}
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
 		});
 		
 		back_button.setOnAction(event -> {
+			resources.changeProperty("xmx", xmx_spinner.getValue().toString());
+			resources.changeProperty("xms", xms_spinner.getValue().toString());
+			resources.changeProperty("permgen", permgen_spinner.getValue().toString());
+			resources.changeProperty("path", jvm_path_field.getText());
+			
 			try 
 			{
 				Scene scene = new Scene(FXMLLoader.load(resources.getFXML(0)), Launcher.width, Launcher.height);
@@ -141,12 +145,12 @@ public class OptionsScreen
 			} 
 			catch (IOException e) 
 			{
-				e.printStackTrace();
+				ErrorWindow.show(e);
 			}
 		});
     }
 	
-	private void setupLanguage() throws UnsupportedEncodingException, IOException
+	private void setupLanguage()
 	{
 		Properties lang = resources.getLangFile();
 		if(resources.getProperty("lang").equals("ru"))

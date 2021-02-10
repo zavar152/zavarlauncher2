@@ -56,9 +56,9 @@
                      </font>
                   </Label>
                   <TextField fx:id="jvm_path_field" layoutX="77.0" layoutY="13.0" prefHeight="25.0" prefWidth="247.0" />
-                  <Spinner layoutX="77.0" layoutY="50.0" prefHeight="25.0" prefWidth="110.0" fx:id="xmx_spinner" />
-                  <Spinner layoutX="77.0" layoutY="82.0" prefHeight="25.0" prefWidth="110.0" fx:id="xms_spinner" />
-                  <Spinner fx:id="permgen_spinner" layoutX="77.0" layoutY="116.0" prefHeight="25.0" prefWidth="110.0" />
+                  <Spinner editable="true" layoutX="77.0" layoutY="50.0" prefHeight="25.0" prefWidth="110.0" fx:id="xmx_spinner" />
+                  <Spinner editable="true" layoutX="77.0" layoutY="82.0" prefHeight="25.0" prefWidth="110.0" fx:id="xms_spinner" />
+                  <Spinner fx:id="permgen_spinner" editable="true" layoutX="77.0" layoutY="116.0" prefHeight="25.0" prefWidth="110.0" />
                   <Label layoutX="8.0" layoutY="53.0" prefHeight="20.0" prefWidth="76.0" text="Xmx:" fx:id="xmx_label">
                      <font>
                         <Font name="System Bold" size="14.0" />

@@ -60,8 +60,8 @@ public class MainScreen
 	
 	private static Task<Void> task;
 	
-	private ResourcesManager resources = ResourcesManager.getManager();
-	private InstanceManager instManager = InstanceManager.getManager();
+	private ResourcesManager resources;
+	private InstanceManager instManager;
 	
 	private static boolean launching = false;
 	
@@ -70,7 +70,7 @@ public class MainScreen
 	private ContextMenu contextMenu = new ContextMenu();
 	
 	private void buildList()
-	{
+	{ 
 		instances_listview.getItems().clear();
 		contextMenu.getItems().clear();
 		Pane[] instances = new Pane[instManager.getInstances().size()];
@@ -82,6 +82,7 @@ public class MainScreen
 			String name = inst.getName();
 			Label text = new Label(name);
 			instances[i].setOnMousePressed(event -> {
+				launch_button.setDisable(false);
 				selected_instance = text.getText();
 				if(inst.isInstalled() & inst.isUpdated())
 				{
@@ -100,6 +101,7 @@ public class MainScreen
 					if(inst.isInstalled())
 					{
 						selected_instance = text.getText();
+						launch_button.setDisable(false);
 						contextMenu.show(instances_listview, event.getScreenX(), event.getScreenY());
 					}
 					else
@@ -152,7 +154,8 @@ public class MainScreen
 				{
 					ErrorWindow.show(e);
 				}
-				launch_button.setText(resources.getLangFile().getProperty("launcher.button.download"));
+				launch_button.setText("");
+				launch_button.setDisable(true);
 				buildList();
 			}
 		});
@@ -172,6 +175,18 @@ public class MainScreen
 	@FXML
     void initialize() throws IOException 
     {
+		resources = ResourcesManager.getManager();
+		instManager = InstanceManager.getManager();
+		
+		if(Boolean.parseBoolean(resources.getProperty("console")))
+		{
+			Launcher.consoleStage.show();
+		}
+		else
+		{
+			Launcher.consoleStage.hide();
+		}
+		
 		buildList();
 		
 		setupLanguage();
@@ -253,6 +268,8 @@ public class MainScreen
 								        instManager.installInstance(selected_instance);
 								        Platform.runLater(() -> {
 											buildList();
+											launch_button.setDisable(true);
+											launch_button.setText("");
 								        });
 							        }
 							        launching = false;
@@ -293,7 +310,7 @@ public class MainScreen
 	private void setupLanguage() throws UnsupportedEncodingException, IOException
 	{
 		Properties lang = resources.getLangFile();
-		launch_button.setText(lang.getProperty("launcher.button.launch"));
+		//launch_button.setText(lang.getProperty("launcher.button.launch"));
 		account_button.setText(lang.getProperty("launcher.button.account"));
 		options_button.setText(lang.getProperty("launcher.button.options"));
 		open.setText(lang.getProperty("launcher.menu.open"));
